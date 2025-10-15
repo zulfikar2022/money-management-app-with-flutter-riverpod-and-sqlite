@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_money_management_app/widgets/app_bar_for_tab_items.dart';
 
 class TabsCompletedScreen extends StatefulWidget {
   const TabsCompletedScreen({super.key});
@@ -11,6 +12,6 @@ class TabsCompletedScreen extends StatefulWidget {
 class _TabsCompletedScreenState extends State<TabsCompletedScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text("Tabs completed Screen")));
+    return Scaffold(appBar: getAppBar("Completed", context));
   }
 }

@@ -33,7 +33,7 @@ class _TabsScreenState extends State<TabsScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: Colors.orange, // color for selected icon & label
+        selectedItemColor: Colors.blueGrey, // color for selected icon & label
         unselectedItemColor: Colors.grey, // color for others
         selectedLabelStyle: const TextStyle(
           fontWeight: FontWeight.bold,

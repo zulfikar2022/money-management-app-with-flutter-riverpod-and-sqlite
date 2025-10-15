@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_money_management_app/widgets/app_bar_for_tab_items.dart';
 
 class TabsAllScreen extends StatefulWidget {
   const TabsAllScreen({super.key});
@@ -11,6 +12,6 @@ class TabsAllScreen extends StatefulWidget {
 class _TabsAllScreenState extends State<TabsAllScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text("Tabs all Screen")));
+    return Scaffold(appBar: getAppBar("All", context));
   }
 }
