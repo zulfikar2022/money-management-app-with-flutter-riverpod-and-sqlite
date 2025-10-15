@@ -21,7 +21,7 @@ Future<Database> getDatabase() async {
         initial_amount INTEGER NOT NULL CHECK(initial_amount > 0),
         creating_date DATETIME DEFAULT CURRENT_TIMESTAMP,
         type TEXT NOT NULL,
-        image TEXT
+        image TEXT DEFAULT ''
         )
       ''');
       await database.execute('''
