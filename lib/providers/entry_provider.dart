@@ -48,3 +48,7 @@ class EntryNotifier extends AsyncNotifier<List<Entry>> {
     state = AsyncValue.data(allEntries);
   }
 }
+
+final entryProvider = AsyncNotifierProvider<EntryNotifier, List<Entry>>(() {
+  return EntryNotifier();
+});

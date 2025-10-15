@@ -1,17 +1,36 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_money_management_app/providers/entry_provider.dart';
 import 'package:flutter_money_management_app/widgets/app_bar_for_tab_items.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TabsAllScreen extends StatefulWidget {
+class TabsAllScreen extends ConsumerStatefulWidget {
   const TabsAllScreen({super.key});
 
   @override
-  State<TabsAllScreen> createState() => _TabsAllScreenState();
+  ConsumerState<TabsAllScreen> createState() => _TabsAllScreenState();
 }
 
-class _TabsAllScreenState extends State<TabsAllScreen> {
+class _TabsAllScreenState extends ConsumerState<TabsAllScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: getAppBar("All", context));
+    final entryData = ref.watch(entryProvider);
+    return entryData.when(
+      data: (entries) {
+        return Scaffold(
+          appBar: getAppBar("All", context),
+          body: Center(child: Text("Got data")),
+        );
+      },
+      error: (_, error) {
+        return Text("Error");
+      },
+      loading: () {
+        return Scaffold(
+          appBar: getAppBar("All", context),
+          body: Center(child: CircularProgressIndicator()),
+        );
+      },
+    );
   }
 }
