@@ -1,5 +1,6 @@
 import 'package:flutter_money_management_app/helpers/db_helpers.dart';
 import 'package:flutter_money_management_app/models/entry.dart';
+import 'package:flutter_money_management_app/providers/single_entry_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class EntryNotifier extends AsyncNotifier<List<Entry>> {
@@ -12,28 +13,24 @@ class EntryNotifier extends AsyncNotifier<List<Entry>> {
   Future<void> getProvidingEntries() async {
     state = AsyncValue.loading();
     final allEntries = await readProvidingEntries();
-    final providingEntries = allEntries
-        .where((entry) => entry.type == "providing")
-        .toList();
-    state = AsyncValue.data(providingEntries);
+    state = await AsyncValue.guard(() async {
+      return allEntries.where((entry) => entry.type == "providing").toList();
+    });
   }
 
   Future<void> getBorrowingEntries() async {
     state = AsyncValue.loading();
-    final allEntries = await readBorrowingEntries();
-    final borrowingEntries = allEntries
-        .where((entry) => entry.type == "borrowing")
-        .toList();
-    state = AsyncValue.data(borrowingEntries);
+    state = await AsyncValue.guard(() async {
+      final allEntries = await readBorrowingEntries();
+      return allEntries.where((entry) => entry.type == "borrowing").toList();
+    });
   }
 
   Future<void> getCompletedEntries() async {
     state = AsyncValue.loading();
-    final allEntries = await readCompletedEntries();
-    final completedEntries = allEntries
-        .where((entry) => entry.amount == 0)
-        .toList();
-    state = AsyncValue.data(completedEntries);
+    state = await AsyncValue.guard(() async {
+      return await readCompletedEntries();
+    });
   }
 
   Future<void> addEntry(
@@ -43,9 +40,40 @@ class EntryNotifier extends AsyncNotifier<List<Entry>> {
     String image,
   ) async {
     state = AsyncValue.loading();
-    await enterAnEntry(name, amount, type, image);
-    final allEntries = await readAllEntries();
-    state = AsyncValue.data(allEntries);
+    state = await AsyncValue.guard(() async {
+      await enterAnEntry(name, amount, type, image);
+      return await readAllEntries();
+    });
+  }
+
+  Future<void> updateEntry(
+    int id,
+    String name,
+    String entryType,
+    String imagePath,
+    bool isImageChanged,
+  ) async {
+    state = AsyncValue.loading();
+
+    state = await AsyncValue.guard(() async {
+      await updateAnEntry(
+        id,
+        name: name,
+        entryType: entryType,
+        imagePath: imagePath,
+        isImageChanged: isImageChanged,
+      );
+      ref.invalidate(singleEntryProvider(id));
+      return await readAllEntries();
+    });
+  }
+
+  Future<void> deleteEntry(int id) async {
+    state = AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      await deleteAnEntry(id);
+      return await readAllEntries();
+    });
   }
 }
 
