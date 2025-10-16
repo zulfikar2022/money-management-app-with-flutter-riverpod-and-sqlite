@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_money_management_app/models/entry.dart';
+import 'package:flutter_money_management_app/providers/borrowing_entry_provider.dart';
 import 'package:flutter_money_management_app/providers/entry_provider.dart';
 import 'package:flutter_money_management_app/widgets/all_entries.dart';
 import 'package:flutter_money_management_app/widgets/app_bar_for_tab_items.dart';
@@ -17,7 +18,7 @@ class TabsBorrowingScreen extends ConsumerStatefulWidget {
 class _TabsBorrowingScreenState extends ConsumerState<TabsBorrowingScreen> {
   @override
   Widget build(BuildContext context) {
-    final entryData = ref.watch(entryProvider);
+    final entryData = ref.watch(borrowingEntryProvider);
     return entryData.when(
       data: (entries) {
         return Scaffold(
