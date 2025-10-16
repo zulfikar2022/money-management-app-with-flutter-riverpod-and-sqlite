@@ -116,7 +116,10 @@ class _EntryDetailsScreensState extends ConsumerState<EntryDetailsScreens> {
                       backgroundImage: FileImage(File(entry.image)),
                       radius: height * 0.1,
                     )
-                  : Image.asset('assets/images/default_avatar.jpg'),
+                  : Image.asset(
+                      'assets/images/default_avatar.jpg',
+                      height: height * 0.2,
+                    ),
               Padding(
                 padding: const EdgeInsets.only(left: 20, right: 10, top: 10),
                 child: Text(
@@ -152,20 +155,7 @@ class _EntryDetailsScreensState extends ConsumerState<EntryDetailsScreens> {
                 )
               : SizedBox(),
           SizedBox(height: 10),
-          TextButton(
-            onPressed: () async {
-              // final needReload = await Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (ctx) => AddPaymentScreen(entryId: entry.id),
-              //   ),
-              // );
-              // if (needReload) {
-              //   setState(() {});
-              // }
-            },
-            child: Text("Add Transaction+"),
-          ),
+          TextButton(onPressed: () async {}, child: Text("Add Transaction+")),
         ],
       );
     } else {
@@ -179,12 +169,15 @@ class _EntryDetailsScreensState extends ConsumerState<EntryDetailsScreens> {
                       padding: const EdgeInsets.all(8.0),
                       child: CircleAvatar(
                         backgroundImage: FileImage(File(entry.image)),
-                        radius: height * 0.1,
+                        radius: height * 0.01,
                       ),
                     )
                   : Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Image.asset('assets/images/default_avatar.jpg'),
+                      child: Image.asset(
+                        'assets/images/default_avatar.jpg',
+                        height: height * 0.3,
+                      ),
                     ),
               Expanded(
                 child: Padding(
