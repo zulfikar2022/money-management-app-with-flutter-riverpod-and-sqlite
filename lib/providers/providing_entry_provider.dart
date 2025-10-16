@@ -6,7 +6,6 @@ class ProvidingEntryNotifier extends AsyncNotifier<List<Entry>> {
   @override
   Future<List<Entry>> build() async {
     final providingEntries = await readProvidingEntries();
-    print('Providing entries: $providingEntries');
     return providingEntries;
   }
 }

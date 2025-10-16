@@ -116,7 +116,7 @@ class _EntryDetailsScreensState extends ConsumerState<EntryDetailsScreens> {
                       backgroundImage: FileImage(File(entry.image)),
                       radius: height * 0.1,
                     )
-                  : Image.asset('lib/assets/images/default_avatar.jpg'),
+                  : Image.asset('assets/images/default_avatar.jpg'),
               Padding(
                 padding: const EdgeInsets.only(left: 20, right: 10, top: 10),
                 child: Text(
@@ -184,9 +184,7 @@ class _EntryDetailsScreensState extends ConsumerState<EntryDetailsScreens> {
                     )
                   : Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Image.asset(
-                        'lib/assets/images/default_avatar.jpg',
-                      ),
+                      child: Image.asset('assets/images/default_avatar.jpg'),
                     ),
               Expanded(
                 child: Padding(

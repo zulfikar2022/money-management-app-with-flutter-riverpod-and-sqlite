@@ -1,5 +1,8 @@
 import 'package:flutter_money_management_app/helpers/db_helpers.dart';
 import 'package:flutter_money_management_app/models/entry.dart';
+import 'package:flutter_money_management_app/providers/borrowing_entry_provider.dart';
+import 'package:flutter_money_management_app/providers/providing_entry_provider.dart'
+    show providingEntryProvider;
 import 'package:flutter_money_management_app/providers/single_entry_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,6 +22,8 @@ class EntryNotifier extends AsyncNotifier<List<Entry>> {
     state = AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await enterAnEntry(name, amount, type, image);
+      ref.invalidate(borrowingEntryProvider);
+      ref.invalidate(providingEntryProvider);
       return await readAllEntries();
     });
   }
@@ -41,6 +46,8 @@ class EntryNotifier extends AsyncNotifier<List<Entry>> {
         isImageChanged: isImageChanged,
       );
       ref.invalidate(singleEntryProvider(id));
+      ref.invalidate(borrowingEntryProvider);
+      ref.invalidate(providingEntryProvider);
       return await readAllEntries();
     });
   }
@@ -49,6 +56,9 @@ class EntryNotifier extends AsyncNotifier<List<Entry>> {
     state = AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await deleteAnEntry(id);
+      ref.invalidate(borrowingEntryProvider);
+      ref.invalidate(singleEntryProvider(id));
+      ref.invalidate(providingEntryProvider);
       return await readAllEntries();
     });
   }
