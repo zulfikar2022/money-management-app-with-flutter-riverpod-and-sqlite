@@ -82,7 +82,7 @@ Future<List<Entry>> readProvidingEntries() async {
   final entries = await db.query(
     'entries',
     where: 'type = ?',
-    whereArgs: ['Providing'],
+    whereArgs: ['providing'],
     orderBy: 'creating_date DESC',
   );
   return entries.map((item) {
@@ -104,7 +104,7 @@ Future<List<Entry>> readBorrowingEntries() async {
   final entries = await db.query(
     'entries',
     where: 'type = ?',
-    whereArgs: ['Borrowing'],
+    whereArgs: ['borrowing'],
     orderBy: 'creating_date DESC',
   );
   return entries.map((item) {
@@ -323,7 +323,7 @@ Future<Map<String, double>> getStatistics() async {
 
   final totalLentResult = await db.rawQuery(
     'SELECT SUM(amount) as total_lent FROM entries WHERE type = ? ',
-    ['Providing'],
+    ['providing'],
   );
   final totalLent =
       (totalLentResult.first['total_lent'] as int?)?.toDouble() ?? 0.0;
@@ -337,7 +337,7 @@ Future<Map<String, double>> getStatistics() async {
 
   final totalRecoveredResult = await db.rawQuery(
     'SELECT SUM(payment_amount) as total_recovered FROM transactions WHERE entry_id IN (SELECT id FROM entries WHERE type = ?)',
-    ['Providing'],
+    ['providing'],
   );
   final totalRecovered =
       (totalRecoveredResult.first['total_recovered'] as int?)?.toDouble() ??
@@ -345,7 +345,7 @@ Future<Map<String, double>> getStatistics() async {
 
   final totalPaidResult = await db.rawQuery(
     'SELECT SUM(payment_amount) as total_paid FROM transactions WHERE entry_id IN (SELECT id FROM entries WHERE type = ?)',
-    ['Borrowing'],
+    ['borrowing'],
   );
   final totalPaid =
       (totalPaidResult.first['total_paid'] as int?)?.toDouble() ?? 0.0;

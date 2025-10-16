@@ -10,29 +10,6 @@ class EntryNotifier extends AsyncNotifier<List<Entry>> {
     return allEntries;
   }
 
-  Future<void> getProvidingEntries() async {
-    state = AsyncValue.loading();
-    final allEntries = await readProvidingEntries();
-    state = await AsyncValue.guard(() async {
-      return allEntries.where((entry) => entry.type == "providing").toList();
-    });
-  }
-
-  Future<void> getBorrowingEntries() async {
-    state = AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      final allEntries = await readBorrowingEntries();
-      return allEntries.where((entry) => entry.type == "borrowing").toList();
-    });
-  }
-
-  Future<void> getCompletedEntries() async {
-    state = AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      return await readCompletedEntries();
-    });
-  }
-
   Future<void> addEntry(
     String name,
     int amount,

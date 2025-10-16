@@ -175,7 +175,7 @@ class _UpdateEntryScreenState extends ConsumerState<UpdateEntryScreen> {
             ElevatedButton(
               onPressed: saveForm,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
+                backgroundColor: Colors.blueGrey,
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
               child: const Text(

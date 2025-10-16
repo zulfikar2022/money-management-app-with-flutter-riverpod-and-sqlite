@@ -1,18 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_money_management_app/providers/entry_provider.dart';
 import 'package:flutter_money_management_app/screens/tabs_screen/tabs_all_screen.dart';
 import 'package:flutter_money_management_app/screens/tabs_screen/tabs_borrowing_screen.dart';
 import 'package:flutter_money_management_app/screens/tabs_screen/tabs_completed_screen.dart';
 import 'package:flutter_money_management_app/screens/tabs_screen/tabs_providing_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TabsScreen extends StatefulWidget {
+class TabsScreen extends ConsumerStatefulWidget {
   const TabsScreen({super.key});
 
   @override
-  State<TabsScreen> createState() => _TabsScreenState();
+  ConsumerState<TabsScreen> createState() => _TabsScreenState();
 }
 
-class _TabsScreenState extends State<TabsScreen> {
+class _TabsScreenState extends ConsumerState<TabsScreen> {
   int selectedIndex = 0;
   List<Widget> screens = [
     TabsAllScreen(),
