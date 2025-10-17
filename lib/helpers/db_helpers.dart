@@ -292,26 +292,28 @@ Future<void> addTransaction(
   String? description,
   int paymentAmount,
 ) async {
-  Database db = await getDatabase();
-  final entry = await readEntryById(entryId);
-  if (entry == null) {
-    throw Exception("Entry not found");
-  }
-  int newAmount = entry.amount - paymentAmount;
-  if (newAmount < 0) {
-    throw Exception("Payment amount exceeds the remaining amount");
-  }
-  await db.insert('transactions', {
-    'entry_id': entryId,
-    'payment_amount': paymentAmount,
-    'description': description,
-  });
-  await db.update(
-    'entries',
-    {'amount': newAmount},
-    where: 'id = ?',
-    whereArgs: [entryId],
-  );
+  try {
+    Database db = await getDatabase();
+    final entry = await readEntryById(entryId);
+    if (entry == null) {
+      throw Exception("Entry not found");
+    }
+    int newAmount = entry.amount - paymentAmount;
+    if (newAmount < 0) {
+      throw Exception("Payment amount exceeds the remaining amount");
+    }
+    await db.insert('transactions', {
+      'entry_id': entryId,
+      'payment_amount': paymentAmount,
+      'description': description,
+    });
+    await db.update(
+      'entries',
+      {'amount': newAmount},
+      where: 'id = ?',
+      whereArgs: [entryId],
+    );
+  } catch (error) {}
 }
 
 Future<Map<String, double>> getStatistics() async {

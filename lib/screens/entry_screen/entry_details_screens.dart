@@ -1,12 +1,13 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_money_management_app/models/entry.dart';
 import 'package:flutter_money_management_app/models/transaction.dart';
 import 'package:flutter_money_management_app/providers/entry_provider.dart';
 import 'package:flutter_money_management_app/providers/single_entry_provider.dart';
+import 'package:flutter_money_management_app/providers/transaction_provider.dart';
 import 'package:flutter_money_management_app/screens/entry_screen/update_entry_screen.dart';
+import 'package:flutter_money_management_app/screens/transaction_screen/add_transaction_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class EntryDetailsScreens extends ConsumerStatefulWidget {
@@ -53,6 +54,11 @@ class _EntryDetailsScreensState extends ConsumerState<EntryDetailsScreens> {
     final height = MediaQuery.of(context).size.height;
 
     final entryData = ref.watch(singleEntryProvider(widget.entry.id));
+
+    final transactionNotifierProviderReturnedData = ref.watch(
+      transactionNotifierProvider(widget.entry.id),
+    );
+
     return entryData.when(
       data: (data) {
         return Scaffold(
@@ -78,7 +84,12 @@ class _EntryDetailsScreensState extends ConsumerState<EntryDetailsScreens> {
             backgroundColor: Colors.blueGrey,
             foregroundColor: Colors.white,
           ),
-          body: generateEntryDetailsScreen(data, orientation, height, []),
+          body: generateEntryDetailsScreen(
+            data,
+            orientation,
+            height,
+            transactionNotifierProviderReturnedData.value ?? [],
+          ),
         );
       },
       error: (_, __) {
@@ -104,6 +115,7 @@ class _EntryDetailsScreensState extends ConsumerState<EntryDetailsScreens> {
     List<TransactionPayment> data,
   ) {
     Widget? content;
+
     if (orientation == Orientation.portrait) {
       content = ListView(
         children: [
@@ -141,46 +153,51 @@ class _EntryDetailsScreensState extends ConsumerState<EntryDetailsScreens> {
               ),
             ],
           ),
-          data.isNotEmpty
-              ? Column(
-                  children: data.map((item) {
-                    return ListTile(
-                      leading: Icon(Icons.currency_exchange),
-                      title: Text("Amount: ${item.amount}"),
-                      subtitle: Text(
-                        "Date: ${item.paymentDate.toLocal().toString().split(' ')[0]}",
-                      ),
-                    );
-                  }).toList(),
-                )
-              : SizedBox(),
+
+          getTransactions(data),
           SizedBox(height: 10),
-          TextButton(onPressed: () async {}, child: Text("Add Transaction+")),
+
+          TextButton(
+            onPressed: () async {
+              final needToRefresh = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (ctx) =>
+                      AddTransactionScreen(entryId: widget.entry.id),
+                ),
+              );
+              if (needToRefresh) {
+                setState(() {});
+              }
+            },
+            child: Text("Add Transaction+"),
+          ),
         ],
       );
     } else {
       content = Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Column(
-            children: [
-              entry.image != ''
-                  ? Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: CircleAvatar(
-                        backgroundImage: FileImage(File(entry.image)),
-                        radius: height * 0.01,
+          Expanded(
+            child: ListView(
+              children: [
+                entry.image != ''
+                    ? Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CircleAvatar(
+                          backgroundImage: FileImage(File(entry.image)),
+                          radius: height * 0.3,
+                        ),
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset(
+                          'assets/images/default_avatar.jpg',
+                          height: height * 0.3,
+                        ),
                       ),
-                    )
-                  : Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Image.asset(
-                        'assets/images/default_avatar.jpg',
-                        height: height * 0.3,
-                      ),
-                    ),
-              Expanded(
-                child: Padding(
+                SizedBox(height: 20),
+                Padding(
                   padding: const EdgeInsets.only(left: 20, right: 10, top: 10),
                   child: Column(
                     children: [
@@ -211,38 +228,27 @@ class _EntryDetailsScreensState extends ConsumerState<EntryDetailsScreens> {
                     ],
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           SizedBox(width: 100),
           Expanded(
             child: ListView(
               children: [
-                data.isNotEmpty
-                    ? Column(
-                        children: data.map((item) {
-                          return ListTile(
-                            leading: Icon(Icons.currency_exchange),
-                            title: Text("Amount: ${item.amount}"),
-                            subtitle: Text(
-                              "Date: ${item.paymentDate.toLocal().toString().split(' ')[0]}",
-                            ),
-                          );
-                        }).toList(),
-                      )
-                    : SizedBox(),
                 SizedBox(height: 10),
+                getTransactions(data),
                 TextButton(
                   onPressed: () async {
-                    // final needReload = await Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (ctx) => AddPaymentScreen(entryId: entry.id),
-                    //   ),
-                    // );
-                    // if (needReload) {
-                    //   setState(() {});
-                    // }
+                    final needToRefresh = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (ctx) =>
+                            AddTransactionScreen(entryId: widget.entry.id),
+                      ),
+                    );
+                    if (needToRefresh) {
+                      setState(() {});
+                    }
                   },
                   child: Text("Add Transaction+"),
                 ),
@@ -253,5 +259,30 @@ class _EntryDetailsScreensState extends ConsumerState<EntryDetailsScreens> {
       );
     }
     return content;
+  }
+
+  Widget getTransactions(List<TransactionPayment> transactions) {
+    if (transactions.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 8.0, bottom: 10),
+        child: Center(
+          child: Text(
+            "There is not transaction for this entry",
+            style: TextStyle(),
+          ),
+        ),
+      );
+    }
+
+    List<Widget> listTileList = transactions.map((t) {
+      return ListTile(
+        leading: Icon(Icons.currency_exchange),
+        title: Text("Amount: ${t.amount}"),
+        subtitle: Text(
+          "Date: ${t.paymentDate.toLocal().toString().split(' ')[0]}",
+        ),
+      );
+    }).toList();
+    return Column(children: listTileList);
   }
 }

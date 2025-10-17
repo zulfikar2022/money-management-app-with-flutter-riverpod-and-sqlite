@@ -17,7 +17,7 @@ class SingleEntryNotifier extends AsyncNotifier<Entry> {
 
   Future<void> refreshEntry() async {
     state = const AsyncValue.loading();
-    AsyncValue.guard(() async {
+    state = await AsyncValue.guard(() async {
       final entry = await readEntryById(entryId);
       if (entry == null) {
         throw Exception("Entry not found");
