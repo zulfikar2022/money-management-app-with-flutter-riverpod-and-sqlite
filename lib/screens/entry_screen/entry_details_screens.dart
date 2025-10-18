@@ -55,10 +55,6 @@ class _EntryDetailsScreensState extends ConsumerState<EntryDetailsScreens> {
 
     final entryData = ref.watch(singleEntryProvider(widget.entry.id));
 
-    final transactionNotifierProviderReturnedData = ref.watch(
-      transactionNotifierProvider(widget.entry.id),
-    );
-
     return entryData.when(
       data: (data) {
         return Scaffold(
@@ -84,12 +80,7 @@ class _EntryDetailsScreensState extends ConsumerState<EntryDetailsScreens> {
             backgroundColor: Colors.blueGrey,
             foregroundColor: Colors.white,
           ),
-          body: generateEntryDetailsScreen(
-            data,
-            orientation,
-            height,
-            transactionNotifierProviderReturnedData.value ?? [],
-          ),
+          body: generateEntryDetailsScreen(data, orientation, height),
         );
       },
       error: (_, __) {
@@ -112,7 +103,6 @@ class _EntryDetailsScreensState extends ConsumerState<EntryDetailsScreens> {
     Entry entry,
     Orientation orientation,
     double height,
-    List<TransactionPayment> data,
   ) {
     Widget? content;
 
@@ -154,7 +144,7 @@ class _EntryDetailsScreensState extends ConsumerState<EntryDetailsScreens> {
             ],
           ),
 
-          getTransactions(data),
+          TransactionWidget(entryId: widget.entry.id),
           SizedBox(height: 10),
 
           TextButton(
@@ -236,7 +226,7 @@ class _EntryDetailsScreensState extends ConsumerState<EntryDetailsScreens> {
             child: ListView(
               children: [
                 SizedBox(height: 10),
-                getTransactions(data),
+                TransactionWidget(entryId: widget.entry.id),
                 TextButton(
                   onPressed: () async {
                     final needToRefresh = await Navigator.push(
@@ -260,29 +250,42 @@ class _EntryDetailsScreensState extends ConsumerState<EntryDetailsScreens> {
     }
     return content;
   }
+}
 
-  Widget getTransactions(List<TransactionPayment> transactions) {
-    if (transactions.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 8.0, bottom: 10),
-        child: Center(
-          child: Text(
-            "There is not transaction for this entry",
-            style: TextStyle(),
-          ),
-        ),
-      );
-    }
-
-    List<Widget> listTileList = transactions.map((t) {
-      return ListTile(
-        leading: Icon(Icons.currency_exchange),
-        title: Text("Amount: ${t.amount}"),
-        subtitle: Text(
-          "Date: ${t.paymentDate.toLocal().toString().split(' ')[0]}",
-        ),
-      );
-    }).toList();
-    return Column(children: listTileList);
+class TransactionWidget extends ConsumerWidget {
+  const TransactionWidget({super.key, required this.entryId});
+  final int entryId;
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final transactionProviderValue = ref.watch(
+      transactionNotifierProvider(entryId),
+    );
+    return transactionProviderValue.when(
+      data: (transactions) {
+        if (transactions.isEmpty) {
+          return Center(child: Text("No transaction for this entry"));
+        }
+        List<Widget> listTileList = transactions.map((t) {
+          return ListTile(
+            leading: Icon(Icons.currency_exchange),
+            title: Text("Amount: ${t.amount}"),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Date: ${t.paymentDate.toLocal().toString().split(' ')[0]}",
+                ),
+                t.description != "" ? Text(t.description) : SizedBox(),
+              ],
+            ),
+          );
+        }).toList();
+        return Column(children: listTileList);
+      },
+      error: (error, stack) {
+        return Center(child: Text("Error Fetching data"));
+      },
+      loading: () => Center(child: CircularProgressIndicator()),
+    );
   }
 }
