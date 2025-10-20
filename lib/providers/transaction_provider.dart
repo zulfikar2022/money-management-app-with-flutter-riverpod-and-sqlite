@@ -10,12 +10,14 @@ class TransactionNotifier extends AsyncNotifier<List<TransactionPayment>> {
   @override
   Future<List<TransactionPayment>> build() async {
     state = const AsyncValue.loading();
-    final transactions = await getAllTransactions(entryId);
-    if (transactions.isEmpty) {
-      throw Exception("transactions not found");
+    try {
+      final transactions = await getAllTransactions(entryId);
+      state = AsyncValue.data(transactions);
+      return transactions;
+    } catch (error) {
+      state = AsyncValue.error(error, StackTrace.current);
     }
-    state = AsyncValue.data(transactions);
-    return transactions;
+    return [];
   }
 
   Future<void> addTransactionFromProvider(

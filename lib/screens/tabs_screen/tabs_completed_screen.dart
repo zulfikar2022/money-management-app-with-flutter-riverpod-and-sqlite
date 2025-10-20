@@ -21,7 +21,7 @@ class _TabsCompletedScreenState extends ConsumerState<TabsCompletedScreen> {
       data: (entries) {
         return Scaffold(
           appBar: getAppBar("Completed", context),
-          body: getAllEntries(entries, context),
+          body: AllEntriesWidget(entries: entries),
         );
       },
       error: (error, stack) {

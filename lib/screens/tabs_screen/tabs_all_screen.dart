@@ -20,7 +20,7 @@ class _TabsAllScreenState extends ConsumerState<TabsAllScreen> {
       data: (entries) {
         return Scaffold(
           appBar: getAppBar("All", context),
-          body: getAllEntries(entries, context),
+          body: AllEntriesWidget(entries: entries),
         );
       },
       error: (_, error) {

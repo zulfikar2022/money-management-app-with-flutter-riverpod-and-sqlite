@@ -22,7 +22,7 @@ class _TabsProvidingScreenState extends ConsumerState<TabsProvidingScreen> {
         print('Entries in Providing tab: $entries');
         return Scaffold(
           appBar: getAppBar("Providing", context),
-          body: getAllEntries(entries, context),
+          body: AllEntriesWidget(entries: entries),
         );
       },
       error: (s, error) {

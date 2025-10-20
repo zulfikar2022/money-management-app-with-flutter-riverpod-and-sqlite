@@ -23,7 +23,7 @@ class _TabsBorrowingScreenState extends ConsumerState<TabsBorrowingScreen> {
       data: (entries) {
         return Scaffold(
           appBar: getAppBar("Borrowing", context),
-          body: getAllEntries(entries, context),
+          body: AllEntriesWidget(entries: entries),
         );
       },
       error: (_, error) {
