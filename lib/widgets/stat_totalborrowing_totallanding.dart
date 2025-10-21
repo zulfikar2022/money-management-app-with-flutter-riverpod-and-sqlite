@@ -13,6 +13,9 @@ class StatTotalBorrowingTotalLanding extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (remainingBorrowings == 0 && remainingProvidings == 0) {
+      return Center(child: Text("No data available"));
+    }
     return PieChart(
       PieChartData(
         sections: [
