@@ -25,8 +25,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      // home: TabsScreen(),
-      home: FirstPage(),
+      home: TabsScreen(),
+      // home: FirstPage(),
     );
   }
 }

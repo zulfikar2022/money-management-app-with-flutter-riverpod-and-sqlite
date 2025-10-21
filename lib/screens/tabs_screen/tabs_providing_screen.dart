@@ -19,7 +19,7 @@ class _TabsProvidingScreenState extends ConsumerState<TabsProvidingScreen> {
     final entryData = ref.watch(providingEntryProvider);
     return entryData.when(
       data: (entries) {
-        print('Entries in Providing tab: $entries');
+        print("Providing entries length: ${entries.length}");
         return Scaffold(
           appBar: getAppBar("Providing", context),
           body: AllEntriesWidget(entries: entries),

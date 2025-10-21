@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_money_management_app/auth/auth_service.dart';
 import 'package:flutter_money_management_app/auth/logout_view.dart';
-import 'package:flutter_money_management_app/providers/auth_service_provider.dart';
 import 'package:flutter_money_management_app/screens/tabs_screen/tabs_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,9 +16,8 @@ class _FirstPageState extends ConsumerState<FirstPage> {
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: AuthService().authStateChanges,
-      // stream: ref.watch(authServiceProvider).authStateChanges,
+
       builder: (ctx, snapshot) {
-        print("Inside the stream builder");
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CupertinoActivityIndicator());
         }

@@ -4,6 +4,7 @@ import 'package:flutter_money_management_app/providers/borrowing_entry_provider.
 import 'package:flutter_money_management_app/providers/providing_entry_provider.dart'
     show providingEntryProvider;
 import 'package:flutter_money_management_app/providers/single_entry_provider.dart';
+import 'package:flutter_money_management_app/providers/stat_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class EntryNotifier extends AsyncNotifier<List<Entry>> {
@@ -24,6 +25,8 @@ class EntryNotifier extends AsyncNotifier<List<Entry>> {
       await enterAnEntry(name, amount, type, image);
       ref.invalidate(borrowingEntryProvider);
       ref.invalidate(providingEntryProvider);
+      ref.invalidate(statsProvider);
+
       return await readAllEntries();
     });
   }

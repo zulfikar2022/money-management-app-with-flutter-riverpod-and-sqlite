@@ -7,7 +7,6 @@ class SingleEntryNotifier extends AsyncNotifier<Entry> {
   final int entryId;
   @override
   Future<Entry> build() async {
-    state = const AsyncValue.loading();
     final entry = await readEntryById(entryId);
     if (entry == null) {
       throw Exception("Entry not found");

@@ -111,46 +111,51 @@ class AllEntriesWidget extends ConsumerWidget {
               ],
             ),
 
-            child: ListTile(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (ctx) => EntryDetailsScreens(entry: entry),
-                  ),
-                );
-              },
-              leading: CircleAvatar(
-                backgroundImage: entry.image.isNotEmpty
-                    ? FileImage(File(entry.image)) as ImageProvider
-                    : AssetImage('assets/images/default_avatar.jpg'),
-              ),
-              title: Text(
-                entry.name,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    entry.type,
-                    style: TextStyle(
-                      color: entry.type == "providing"
-                          ? Colors.green
-                          : Colors.red,
-                    ),
-                  ),
-                  SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Initial Amount: ${entry.initialAmount}"),
+            child: Container(
+              margin: EdgeInsets.only(bottom: 10),
+              child: ListTile(
+                tileColor: entry.amount == 0 ? Colors.green[50] : null,
 
-                        Text("Remaining Amount: ${entry.amount}"),
-                      ],
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (ctx) => EntryDetailsScreens(entry: entry),
                     ),
-                  ),
-                ],
+                  );
+                },
+                leading: CircleAvatar(
+                  backgroundImage: entry.image.isNotEmpty
+                      ? FileImage(File(entry.image)) as ImageProvider
+                      : AssetImage('assets/images/default_avatar.jpg'),
+                ),
+                title: Text(
+                  entry.name,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      entry.type,
+                      style: TextStyle(
+                        color: entry.type == "providing"
+                            ? Colors.green
+                            : Colors.red,
+                      ),
+                    ),
+                    SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Initial Amount: ${entry.initialAmount}"),
+
+                          Text("Remaining Amount: ${entry.amount}"),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

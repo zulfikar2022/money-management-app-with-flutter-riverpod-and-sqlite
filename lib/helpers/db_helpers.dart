@@ -318,53 +318,28 @@ Future<void> addTransaction(
 
 Future<Map<String, double>> getStatistics() async {
   Database db = await getDatabase();
-  final totalEntriesResult = await db.rawQuery(
-    'SELECT COUNT(*) as count FROM entries',
-  );
-  final totalEntries = Sqflite.firstIntValue(totalEntriesResult) ?? 0;
+  try {
+    final remainingBorrowings = await db.rawQuery(
+      "SELECT SUM(amount) as total_borrowing FROM entries WHERE type = ? and amount > 0",
+      ['borrowing'],
+    );
+    final remainingLendings = await db.rawQuery(
+      "SELECT SUM(amount) as total_providing FROM entries WHERE type = ? and amount > 0",
+      ['providing'],
+    );
 
-  final totalLentResult = await db.rawQuery(
-    'SELECT SUM(amount) as total_lent FROM entries WHERE type = ? ',
-    ['providing'],
-  );
-  final totalLent =
-      (totalLentResult.first['total_lent'] as int?)?.toDouble() ?? 0.0;
-
-  final totalBorrowedResult = await db.rawQuery(
-    'SELECT SUM(amount) as total_borrowed FROM entries WHERE type = ?',
-    ['Borrowing'],
-  );
-  final totalBorrowed =
-      (totalBorrowedResult.first['total_borrowed'] as int?)?.toDouble() ?? 0.0;
-
-  final totalRecoveredResult = await db.rawQuery(
-    'SELECT SUM(payment_amount) as total_recovered FROM transactions WHERE entry_id IN (SELECT id FROM entries WHERE type = ?)',
-    ['providing'],
-  );
-  final totalRecovered =
-      (totalRecoveredResult.first['total_recovered'] as int?)?.toDouble() ??
-      0.0;
-
-  final totalPaidResult = await db.rawQuery(
-    'SELECT SUM(payment_amount) as total_paid FROM transactions WHERE entry_id IN (SELECT id FROM entries WHERE type = ?)',
-    ['borrowing'],
-  );
-  final totalPaid =
-      (totalPaidResult.first['total_paid'] as int?)?.toDouble() ?? 0.0;
-
-  final activeEntries = await db.rawQuery(
-    'SELECT COUNT(*) as count FROM entries WHERE amount > 0',
-  );
-  final activeEntriesCount = Sqflite.firstIntValue(activeEntries) ?? 0;
-  final closedEntriesCount = totalEntries - activeEntriesCount;
-
-  return {
-    'total_entries': totalEntries.toDouble(),
-    'total_provided': totalLent,
-    'total_borrowed': totalBorrowed,
-    'total_recovered': totalRecovered,
-    'total_paid': totalPaid,
-    'active_entries': activeEntriesCount.toDouble(),
-    'closed_entries': closedEntriesCount.toDouble(),
-  };
+    print(remainingLendings);
+    print(remainingBorrowings);
+    return {
+      'remainingBorrowings':
+          remainingBorrowings.first['total_borrowing'] == null
+          ? 0.0
+          : (remainingBorrowings.first['total_borrowing'] as int).toDouble(),
+      'remainingProvidings': remainingLendings.first['total_providing'] == null
+          ? 0.0
+          : (remainingLendings.first['total_providing'] as int).toDouble(),
+    };
+  } catch (error) {
+    throw Exception("Failed to fetch statistics: $error");
+  }
 }
