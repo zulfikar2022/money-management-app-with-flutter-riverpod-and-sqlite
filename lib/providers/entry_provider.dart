@@ -62,6 +62,7 @@ class EntryNotifier extends AsyncNotifier<List<Entry>> {
       ref.invalidate(borrowingEntryProvider);
       ref.invalidate(singleEntryProvider(id));
       ref.invalidate(providingEntryProvider);
+      ref.invalidate(statsProvider);
       return await readAllEntries();
     });
   }
