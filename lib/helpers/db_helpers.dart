@@ -328,8 +328,6 @@ Future<Map<String, double>> getStatistics() async {
       ['providing'],
     );
 
-    print(remainingLendings);
-    print(remainingBorrowings);
     return {
       'remainingBorrowings':
           remainingBorrowings.first['total_borrowing'] == null
